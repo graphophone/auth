@@ -1,0 +1,11 @@
+redis:
+  host: redis
+  port: 6379
+  password: my-redis-pass
+
+jwt:
+  secret: "my jwt secret"
+  expirationTime: 15m
+
+refreshToken:
+  expirationTime: 168h

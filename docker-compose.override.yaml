@@ -1,0 +1,24 @@
+services:
+  redis:
+    networks:
+      - redis-network
+  
+  redis-insight:
+    image: redislabs/redisinsight:3.6.0
+    container_name: redis_auth_dashboard
+    restart: unless-stopped
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDISINSIGHT_HOST: "0.0.0.0"
+      REDISINSIGHT_ACCEPT_LICENCE: true
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "15540:5540"
+    networks:
+      - redis-network
+
+networks:
+  redis-network:
