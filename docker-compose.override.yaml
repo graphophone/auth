@@ -1,8 +1,4 @@
-services:
-  redis:
-    networks:
-      - redis-network
-  
+services:  
   redis-insight:
     image: redislabs/redisinsight:3.6.0
     container_name: redis_auth_dashboard
@@ -19,6 +15,3 @@ services:
       - "15540:5540"
     networks:
       - redis-network
-
-networks:
-  redis-network:
