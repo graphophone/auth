@@ -5,5 +5,8 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.104"
+r2d2 = "0.8.10"
+redis = { version = "1.7.0", features = ["tokio-comp", "r2d2"] }
 serde = { version = "1.0.229", features = ["derive"] }
+tokio = { version = "1.53.1", features = ["full"] }
 yaml_serde = "0.10.7"

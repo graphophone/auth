@@ -22,6 +22,7 @@ impl Config {
 pub struct RedisConfig {
     pub host: String,
     pub port: i16,
+    pub user: String,
     pub password: String,
 }
 
