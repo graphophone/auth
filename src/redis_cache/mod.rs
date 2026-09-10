@@ -1,33 +1,31 @@
 use anyhow::Result;
-use r2d2::Pool;
-use redis::Client;
+use deadpool_redis::{Pool, Runtime};
 
 use crate::config;
 pub struct RedisCache {
-    pool: Pool<Client>,
+    pool: Pool,
 }
 
 impl RedisCache {
     pub fn build(conf: &config::RedisConfig) -> Result<Self> {
-        let client = Client::open(
-            format!(
-                "redis://{}:{}@{}:{}",
-                conf.user,
-                conf.password,
-                conf.host,
-                conf.port,
-            ),
-        )?;
-        let pool = Pool::builder()
-            .build(client)?;
+        let url = format!("redis://{}:{}@{}:{}",
+            conf.user,
+            conf.password,
+            conf.host,
+            conf.port,
+        );
+
+        let cfg = deadpool_redis::Config::from_url(url);
+        let pool = cfg.create_pool(Some(Runtime::Tokio1))?;
 
         Ok(RedisCache { pool })
     }
 
-    pub fn ping(&self) -> Result<()> {
-        let mut con = self.pool.get()?;
-        redis::cmd("PING")
-            .exec(&mut con)?;
+    pub async fn ping(&self) -> Result<()> {
+        let mut con = self.pool.get().await?;
+        deadpool_redis::redis::cmd("PING")
+            .exec_async(&mut con)
+            .await?;
         Ok(())
     }
 }
