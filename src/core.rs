@@ -12,8 +12,8 @@ pub struct TokenManager {
 }
 
 pub struct Tokens {
-    access_token: String,
-    refresh_token: String,
+    pub access_token: String,
+    pub refresh_token: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -22,7 +22,7 @@ struct Claims {
 }
 
 impl TokenManager {
-    async fn build(conf: Config) -> Result<Self> {
+    pub async fn build(conf: Config) -> Result<Self> {
         let redis_cache = RedisCache::build(&conf.redis, 0)?;
         redis_cache.ping().await?;
         
@@ -57,7 +57,7 @@ impl TokenManager {
         Uuid::new_v4().to_string()
     }
 
-    async fn handle_login(&self, user_id: i64) -> Result<Tokens> {
+    pub async fn handle_login(&self, user_id: i64) -> Result<Tokens> {
         let access_token = self.generate_jwt(user_id)?;
         let refresh_token = self.generate_refresh_token();
         self.redis_cache.set_token(
@@ -68,11 +68,11 @@ impl TokenManager {
         Ok(Tokens { access_token, refresh_token })
     }
 
-    async fn handle_logout(&self, refresh_token: String) -> Result<()> {
+    pub async fn handle_logout(&self, refresh_token: String) -> Result<()> {
         self.redis_cache.remove_token(&refresh_token).await
     }
 
-    async fn handle_refresh(&self, refresh_token: String) -> Result<Tokens> {
+    pub async fn handle_refresh(&self, refresh_token: String) -> Result<Tokens> {
         let user_id = self.redis_cache.get_user_id(&refresh_token).await?;
         let user_id = match user_id {
             Some(v) => v,
@@ -82,7 +82,7 @@ impl TokenManager {
         self.handle_login(user_id).await
     }
 
-    async fn get_user_id(&self, access_token: String) -> Result<i64> {
+    pub async fn get_user_id(&self, access_token: String) -> Result<i64> {
         let claims = self.extract_jwt_claims(&access_token)?;
         Ok(claims.sub)
     }
