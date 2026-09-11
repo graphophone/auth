@@ -1,15 +1,11 @@
 use anyhow::Result;
 
-use crate::redis_cache::RedisCache;
-
 pub mod config;
 mod redis_cache;
+mod core;
 
 pub async fn run(conf: config::Config) -> Result<()> {
     println!("config: {:?}", conf);
-
-    let cache = RedisCache::build(&conf.redis)?;
-    cache.ping().await?;
 
     Ok(())
 }
