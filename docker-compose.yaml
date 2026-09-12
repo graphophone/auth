@@ -21,6 +21,8 @@ services:
         condition: service_healthy
     networks:
       - redis-network
+    ports:
+      - "9606:8080"
 
 networks:
   redis-network:

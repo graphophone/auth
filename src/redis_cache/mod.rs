@@ -9,8 +9,8 @@ pub struct RedisCache {
 }
 
 impl RedisCache {
-    pub fn build(conf: &config::RedisConfig, db: i32) -> Result<Self> {
-        let url = format!("redis://{}:{}@{}:{}/{db}",
+    pub fn build(conf: &config::RedisConfig) -> Result<Self> {
+        let url = format!("redis://{}:{}@{}:{}",
             conf.user,
             conf.password,
             conf.host,

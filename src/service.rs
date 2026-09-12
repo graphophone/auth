@@ -11,7 +11,7 @@ pub struct AuthService {
 }
 
 impl AuthService {
-    fn new(token_manager: TokenManager) -> Self {
+    pub fn new(token_manager: TokenManager) -> Self {
         AuthService { token_manager }
     }
 }
@@ -45,7 +45,7 @@ impl Auth for AuthService {
         let tokens = self.token_manager.handle_refresh(req.refresh_token).await;
         let tokens = match tokens {
             Ok(v) => v,
-            Err(_) => return Err(Status::internal("failed to handle login")),
+            Err(_) => return Err(Status::internal("failed to handle refresh")),
         };
         Ok(Response::new(Tokens {
             access_token: tokens.access_token,
@@ -58,7 +58,7 @@ impl Auth for AuthService {
         let user_id = self.token_manager.get_user_id(req.access_token).await;
         let user_id = match user_id {
             Ok(v) => v,
-            Err(_) => return Err(Status::internal("failed to extract user id")),
+            Err(e) => return Err(Status::unauthenticated(e.to_string())),
         };
         Ok(Response::new(UserId { user_id }))
     }
