@@ -11,7 +11,7 @@ services:
     networks:
       - redis-network
 
-  auth:
+  auth-svc:
     build:
       context: .
       dockerfile: Dockerfile

@@ -3,8 +3,13 @@ WORKDIR /app
 
 RUN apk add protoc
 
-COPY . .
+RUN mkdir src
+RUN echo "fn main() { println!(\"Hello world\"); }" >> src/main.rs
+COPY Cargo.toml .
+COPY Cargo.lock .
+RUN cargo build
 
+COPY . .
 RUN cargo build
 
 FROM scratch
